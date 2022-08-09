@@ -16,19 +16,24 @@ use Illuminate\Support\Str;
 
 class ContentController extends Controller
 {
+    //Get All News
     public function news(Request $request) {
         $news = News::all();
         $news = $news->translate($request->api_pref_lang);
+        
         return response()->json($news);
     }
 
-    public function news_details(String $slug) {
+    //News Detail Page
+    public function news_details(String $slug, Request $request) {
         $details = News::where('slug', $slug)->first();
+        $details = $details->translate($request->api_pref_lang);
         $details->image = url(sprintf("storage/%s", str_replace('\\','/',$details->image)));
 
         return response()->json($details);
     }
 
+    //Product Detail page
     public function product_details(String $slug) {
         $details = Product::where('slug', $slug)->first();
         $details->image = json_decode($details->image);
@@ -39,9 +44,24 @@ class ContentController extends Controller
         return response()->json($details);
     }
 
+    //Get Quality Section For Home
+    public function quality(Request $request){
+        $item= Quality::all();
+        $item = $item->translate($request->api_pref_lang);
+
+        $item->map(function($item){
+            $item->image = url(
+                sprintf("storage/%s",str_replace('\\','/',$item->image))
+            );
+        });
+        return response()->json($item);
+    }
+
     //Get Home Page Data
     public function home(Request $request) {
         $home_page = Home::all();
+        $home_page = $home_page->translate($request->api_pref_lang);
+
         //Images
         $home_page->map(function($item){
             $item->banner = url(
@@ -78,21 +98,13 @@ class ContentController extends Controller
                     )
                     );
             }, $item->product_images);
-
-
-            $item->certificates= Quality::all();
-            $item->certificates->map(function($item){
-                $item->image = url(
-                    sprintf("storage/%s",str_replace('\\','/',$item->image))
-                );
-            });
         });
 
         return response()->json($home_page);
     }
 
-    //Get Banner with Data per page
-    public function test($slug){
+    //Get Data per Page
+    public function test(Request $request, $slug){
 
         switch ($slug) {
             case 'hakkimizda':
@@ -100,12 +112,14 @@ class ContentController extends Controller
                 $data = Banner::where('slug', $slug)->first();
                 $data->banner = url(sprintf("storage/%s", str_replace('\\', '/',$data->banner)));
                 $data->page = About::all();
+                $data->page = $data->page->translate($request->api_pref_lang);
 
                 break;
             case 'urunler':
                 $data = Banner::where('slug', $slug)->first();
                 $data->banner = url(sprintf("storage/%s", str_replace('\\', '/',$data->banner)));
                 $data->page = Product::all();
+                $data->page = $data->page->translate($request->api_pref_lang);
 
                 $data->page->map(function($i){
                    $i->image = json_decode($i->image);
@@ -123,6 +137,7 @@ class ContentController extends Controller
                 $data = Banner::where('slug', $slug)->first();
                 $data->banner = url(sprintf("storage/%s", str_replace('\\', '/',$data->banner)));
                 $data->page = News::all();
+                $data->page = $data->page->translate($request->api_pref_lang);
 
                 $data->page->map(function($i){
                     $i->mini_content = Str::words(strip_tags($i->content), 40, '...');
@@ -134,6 +149,7 @@ class ContentController extends Controller
                 $data = Banner::where('slug', $slug)->first();
                 $data->banner = url(sprintf("storage/%s", str_replace('\\', '/',$data->banner)));
                 $data->page = Certificate::all();
+                $data->page = $data->page->translate($request->api_pref_lang);
 
                 $data->page->map(function($i){
                     //ISO
@@ -186,6 +202,7 @@ class ContentController extends Controller
 
         return response()->json($data);
     }
+    //Contact Form
     public function contact(Request $req){
         try {
             $data = $req->validate([

@@ -52,11 +52,13 @@ const ColorButton = styled(Button)({
 
 const Home = () => {
   const [data, setData] = React.useState(null)
+  const [quality, setQuality] = React.useState(null)
 
   const history = useNavigate();
 
   const getData = async () => {
     await axiosClient.get('/api/home').then(res => setData(res.data[0]))
+    await axiosClient.get('/api/quality').then(res => setQuality(res.data))
   }
 
   useEffect(() => {
@@ -188,7 +190,7 @@ const Home = () => {
       <Products data={data?.product_images} content={data?.product_content} />
 
       {/* Kalite */}
-      <Quality data={data?.certificates} />
+      <Quality data={quality} />
     </>
   );
 };

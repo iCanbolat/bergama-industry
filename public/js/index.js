@@ -24154,6 +24154,11 @@ var Home = function Home() {
       data = _React$useState2[0],
       setData = _React$useState2[1];
 
+  var _React$useState3 = react__WEBPACK_IMPORTED_MODULE_0___default().useState(null),
+      _React$useState4 = _slicedToArray(_React$useState3, 2),
+      quality = _React$useState4[0],
+      setQuality = _React$useState4[1];
+
   var history = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_12__.useNavigate)();
 
   var getData = /*#__PURE__*/function () {
@@ -24168,6 +24173,12 @@ var Home = function Home() {
               });
 
             case 2:
+              _context.next = 4;
+              return _utils_axiosClient__WEBPACK_IMPORTED_MODULE_6__["default"].get('/api/quality').then(function (res) {
+                return setQuality(res.data);
+              });
+
+            case 4:
             case "end":
               return _context.stop();
           }
@@ -24324,7 +24335,7 @@ var Home = function Home() {
       data: data === null || data === void 0 ? void 0 : data.product_images,
       content: data === null || data === void 0 ? void 0 : data.product_content
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_Quality__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      data: data === null || data === void 0 ? void 0 : data.certificates
+      data: quality
     })]
   });
 };
